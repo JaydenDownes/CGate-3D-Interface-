@@ -125,9 +125,9 @@ module.exports = config;
 
 ```
 
-5) Run npm installation:
+5) Run server:
 ```bash
-npm install
+node server.js
 ```
 
     
