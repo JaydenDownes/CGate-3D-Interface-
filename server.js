@@ -1,3 +1,4 @@
+console. clear()
 console.log("");
 console.log(" ██████ ██████  ██    ██ ███████     ███████ ███    ███  █████  ██████  ████████     ██   ██  ██████  ███    ███ ███████");
 console.log("██      ██   ██ ██    ██ ██          ██      ████  ████ ██   ██ ██   ██    ██        ██   ██ ██    ██ ████  ████ ██      ");
@@ -11,26 +12,40 @@ console.log("██ ██ ██  ██    ██    █████   ██�
 console.log("██ ██  ██ ██    ██    ██      ██   ██ ██      ██   ██ ██      ██     ");
 console.log("██ ██   ████    ██    ███████ ██   ██ ██      ██   ██  ██████ ███████");
 console.log("");
-console.log("Version 2.0, Created by Jayden Downes");
+console.log("Version 2.2, Created by Jayden Downes");
 console.log("");
+
+
 // Import required modules
-var _ = require('underscore');
-var express = require('express');
-var fs = require('fs');
-var path = require('path');
-var http = require('http');
-var socketIo = require('socket.io');
-var cron = require('cron').CronJob;
+try {
+    var _ = require('underscore');
+    var express = require('express');
+    var fs = require('fs');
+    var path = require('path');
+    var http = require('http');
+    var socketIo = require('socket.io');
+    var cron = require('cron').CronJob;
+    console.log('(\u001b[32m#\u001b[0m) Imported Required Modules');
+} catch (error) {
+    console.error('(\u001b[31m#\u001b[0m) Error while Importing Required Modules:', error);
+}
+
 // Load configuration and common files
-CONFIG = require('./config');
-COMMON = require('./common');
-DB = require('./db.json');
+try {
+    CONFIG = require('./config');
+    COMMON = require('./common');
+    DB = require('./db.json');
+    console.log('(\u001b[32m#\u001b[0m) Imported Configurations');
+} catch (error) {
+    console.error('(\u001b[31m#\u001b[0m) Error while Importing Configurations:', error);
+}
+
 ////////////////////////
 // LOAD THE CONNECTORS
 ////////////////////////
 // If configuration enables C-Gate, initialize C-Gate connection
 if (CONFIG.cgate) {
-	console.log('(\u001b[32m#\u001b[0m) Initializing the cgate connector');
+	console.log('(\u001b[32m#\u001b[0m) Initializing the CGate connector');
 	CBUS = require('./cgate').init();
 }
 // Initialize Express.js for main app and set up HTTP server and Socket.IO
@@ -105,9 +120,9 @@ _.each(DB.tasks, function(task) {
 
 function addCronJob(id, cronstring, expression, commands, timezone) {
 	try {
-		console.log('(\u001b[32m#\u001b[0m) Adding cronjob task: ' + id);
+		console.log('(\u001b[32m#\u001b[0m) Adding cronjob task ID: ' + id);
 		cronjobs[id] = new cronjob(cronstring, function() {
-			console.log('(\u001b[32m#\u001b[0m) Starting Cronjob Task: ' + id);
+			console.log('(\u001b[32m#\u001b[0m) Starting Cronjob Task ID: ' + id);
 			// some of these tasks may have a conditional expression, some can just run
 			if (expression) {
 				if (eval(expression)) {
@@ -117,15 +132,15 @@ function addCronJob(id, cronstring, expression, commands, timezone) {
 				COMMON.doCommands(commands);
 			}
 		}, function() {
-			console.log('(\u001b[32m#\u001b[0m) Cronjob stopped: ' + id)
+			console.log('(\u001b[32m#\u001b[0m) Cronjob stopped, Task ID: ' + id)
 		}, true, timezone);
 	} catch (ex) {
-		console.log("(\u001b[31m#\u001b[0m) cronstring pattern not valid for " + id + ": " + cronstring);
+		console.log("(\u001b[31m#\u001b[0m) Cronstring pattern not valid for ID: " + id + ", Cronstring is currently: " + cronstring);
 	}
 }
 
 function deleteCronJob(id) {
-	console.log('(\u001b[32m#\u001b[0m) Killing cronjob ' + id);
+	console.log('(\u001b[32m#\u001b[0m) Killing Cronjob ID:' + id);
 	if (cronjobs[id]) {
 		cronjobs[id].stop();
 	}
@@ -369,11 +384,21 @@ configApp.delete('/api/configuration/devices/:id', (req, res) => {
 		}
 	});
 });
+
+// Catch-all route
+app.use('*', (req, res) => {
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const userAgent = req.headers['user-agent'];
+
+    console.error(`(\u001b[31m#\u001b[0m) A user at IP address ${ip} using browser ${userAgent} tried to reach the undefined URL: ${req.originalUrl}`);
+    res.status(404).send('URL not found');
+});
+
 //////////////////////////
 // SERVER INITIALIZATION
 //////////////////////////
 // Start server on configured host and port
 server.listen(CONFIG.webserver.port, CONFIG.webserver.host);
 // Log successful server start
-console.log('(\u001b[32m#\u001b[0m) Standalone Configuration Interface is running on: http://' + CONFIG.webserver.host + ':' + CONFIG.webserver.port + '/configuration-interface');
-console.log('(\u001b[32m#\u001b[0m) Standalone Lighting Control Interface is running on: http://' + CONFIG.webserver.host + ':' + CONFIG.webserver.port + '/light-interface');
+console.log('(\u001b[32m#\u001b[0m) \u001b[1mStandalone Configuration Interface is running on: http://' + CONFIG.webserver.host + ':' + CONFIG.webserver.port + '/configuration-interface'+'\u001b[22m');
+console.log('(\u001b[32m#\u001b[0m) \u001b[1mStandalone Lighting Control Interface is running on: http://' + CONFIG.webserver.host + ':' + CONFIG.webserver.port + '/light-interface'+'\u001b[22m');

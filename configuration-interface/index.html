@@ -18,56 +18,68 @@
 	<h2>Devices:</h2>
 	<div id="devices"></div><button onclick="addNewItem('/configuration-interface/api/configuration/devices')">Add Device</button> 
 	<script>
-	function fetchAndDisplay(endpoint, containerId) {
-	   fetch(endpoint)
-	       .then(response => response.json())
-	       .then(data => {
-	           let items = data[endpoint.slice(5)];
+function fetchAndDisplay(endpoint, containerId) {
+    fetch(endpoint)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Log the received data to the console
 
-	           // If it's devices, convert it into an array
-	           if (endpoint === '/configuration-interface/api/configuration/devices') {
-	               items = Object.keys(items).map(key => ({id: key, ...items[key]}));
-	           }
+            // Get the key by removing the leading part of the endpoint string
+            let key = endpoint.replace('/configuration-interface/api/configuration/', '');
 
-	           let html = `<table><thead><tr>`;
+            let items = data[key];
+            if (!items) {
+                console.log('No items found in data for endpoint ' + endpoint + '. This may be expected if no items have been created yet.');
+                items = [];
+            }
 
-	           // Get and display column headers
-	           if(items[0]){
-	               for (let property in items[0]) {
-	                   html += `<th>${property}<\/th>`;
-	               }
-	               html += `<th>Actions<\/th><\/tr><\/thead>`;
-	           }
+            // If it's devices, convert it into an array
+            if (key === 'devices' && typeof items === "object") {
+                items = Object.keys(items).map(id => ({id, ...items[id]}));
+            }
 
-	           for (let item of items) {
-	               html += `<tr><form onsubmit="updateItem(event, '${endpoint}', '${item.id}')">`;
-	               for (let property in item) {
-	                   if (property === "enabled") {
-	                       html += `<td><input type="checkbox" name="${property}" ${item[property] ? 'checked' : ''}><\/td>`;
-	                   } else if (Array.isArray(item[property])) {
-	                       html += `<td>`;
-	                       item[property].forEach((command, index) => {
-	                           for (let commandProperty in command) {
-	                               html += `<label>${commandProperty}: <\/label><input name="${property}[${index}][${commandProperty}]" value='${command[commandProperty]}'><br>`;
-	                           }
-	                       });
-	                       if (endpoint === '/configuration-interface/api/configuration/rules') {
-	                           html += `<button type="button" onclick="addCommand(this)">Add<\/button>`;
-	                       }
-	                       html += `<\/td>`;
-	                   } else if (property === "expression") {
-	                       html += `<td><textarea name="${property}" rows="4" cols="50">${item[property].replace(/'/g, "&apos;")}<\/textarea><\/td>`;
-	                   } else {
-	                       html += `<td><input name="${property}" value='${item[property]}'><\/td>`;
-	                   }
-	               }
-	               html += `<td><button type="submit">Update<\/button>`;
-	               html += `<button type="button" onclick="deleteItem('${endpoint}', '${item.id}')">Delete<\/button><\/td><\/form><\/tr>`;
-	           }
-	           html += `<\/table>`;
-	           document.getElementById(containerId).innerHTML = html;
-	       });
-	}
+           let html = `<table><thead><tr>`;
+
+           // Get and display column headers
+           if(items[0]){
+               for (let property in items[0]) {
+                   html += `<th>${property}<\/th>`;
+               }
+               html += `<th>Actions<\/th><\/tr><\/thead>`;
+           }
+
+           for (let item of items) {
+               html += `<tr><form onsubmit="updateItem(event, '${endpoint}', '${item.id}')">`;
+               for (let property in item) {
+                   if (property === "enabled") {
+                       html += `<td><input type="checkbox" name="${property}" ${item[property] ? 'checked' : ''}><\/td>`;
+                   } else if (Array.isArray(item[property])) {
+                       html += `<td>`;
+                       item[property].forEach((command, index) => {
+                           for (let commandProperty in command) {
+                               html += `<label>${commandProperty}: <\/label><input name="${property}[${index}][${commandProperty}]" value='${command[commandProperty]}'><br>`;
+                           }
+                       });
+                       if (endpoint === '/configuration-interface/api/configuration/rules') {
+                           html += `<button type="button" onclick="addCommand(this)">Add<\/button>`;
+                       }
+                       html += `<\/td>`;
+                   } else if (property === "expression") {
+                       html += `<td><textarea name="${property}" rows="4" cols="50">${item[property].replace(/'/g, "&apos;")}<\/textarea><\/td>`;
+                   } else {
+                       html += `<td><input name="${property}" value='${item[property]}'><\/td>`;
+                   }
+               }
+               html += `<td><button type="submit">Update<\/button>`;
+               html += `<button type="button" onclick="deleteItem('${endpoint}', '${item.id}')">Delete<\/button><\/td><\/form><\/tr>`;
+           }
+           html += `<\/table>`;
+           document.getElementById(containerId).innerHTML = html;
+        })
+       .catch(error => {
+           console.error("Error: ", error);
+       });
+}
 
 
 

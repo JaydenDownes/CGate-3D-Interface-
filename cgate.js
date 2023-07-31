@@ -9,16 +9,16 @@ exports.init = function(){
   // TELNET SESSION TO CONTROL
   control = net.createConnection(CONFIG.cgate.contolport,CONFIG.cgate.host);
   control.on('error', function(error){
-      console.log('cgate control socket error: ' + error);
+      console.log('(\u001b[31m#\u001b[0m) CGate control socket error: ' + error + ' , try checking the interface is online');
   });
   control.on('end', function(){
-      console.log('cgate control socket terminated');
+      console.log('(#) CGate control socket terminated');
   });
   control.on('close', function(){
-      console.log('cgate control socket closed');
+      console.log('(#) CGate control socket closed');
   });
   control.on('timeout', function(){
-      console.log('cgate control socket timed out');
+      console.log('(\u001b[31m#\u001b[0m) CGate control socket timed out, try checking the interface is online');
   });
   carrier.carry(control, function(line) {
     pushRealtime('controlStream',line);
@@ -27,16 +27,16 @@ exports.init = function(){
   // TELNET CHANNEL TO STATUS UPDATES
   events = net.createConnection(CONFIG.cgate.eventport,CONFIG.cgate.host);
   events.on('error', function(error){
-      console.log('cgate events socket error: ' + error);
+      console.log('(\u001b[31m#\u001b[0m) CGate events socket error: ' + error + ' , try checking the interface is online');
   });
   events.on('end', function(){
-      console.log('cgate events socket terminated');
+      console.log('(#) CGate events socket terminated');
   });
   events.on('close', function(){
-      console.log('cgate events socket closed');
+      console.log('(#) CGate events socket closed');
   });
   events.on('timeout', function(){
-      console.log('cgate events socket timed out');
+      console.log('(\u001b[31m#\u001b[0m) CGate events socket timed out, try checking the interface is online');
   });
   carrier.carry(events, function(line) {
     pushRealtime('eventStream',line);
@@ -45,16 +45,16 @@ exports.init = function(){
   // TELNET CHANNEL TO STATUS UPDATES
   statuses = net.createConnection(CONFIG.cgate.statusport,CONFIG.cgate.host);
   statuses.on('error', function(error){
-      console.log('cgate statuses socket error: ' + error);
+      console.log('(\u001b[31m#\u001b[0m) CGate statuses socket error: ' + error + ' , try checking the interface is online');
   });
   statuses.on('end', function(){
-      console.log('cgate statuses socket terminated');
+      console.log('(#) CGate statuses socket terminated');
   });
   statuses.on('close', function(){
-      console.log('cgate statuses socket closed');
+      console.log('(#) CGate statuses socket closed');
   });
   statuses.on('timeout', function(){
-      console.log('cgate statuses socket timed out');
+      console.log('(\u001b[31m#\u001b[0m) CGate statuses socket timed out, try checking the interface is online');
   });
   carrier.carry(statuses, function(line) {
     pushRealtime('statusStream',line);
@@ -119,7 +119,7 @@ function humanLevelValue(level) {
 }
 
 function syncLevels(){
-  console.log('cgate syncing levels');
+  console.log('(#) CGate syncing levels');
   var msg = message = 'GET //'+CONFIG.cgate.cbusname+'/'+CONFIG.cgate.network+'/'+CONFIG.cgate.application+'/* level\n';
   control.write(msg);
 }

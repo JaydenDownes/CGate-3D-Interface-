@@ -4,7 +4,7 @@ $(document).ready(function(){
 	$("#sortTable").tablesorter(); 
 	
 	// get the settings from the server
-	$.getJSON('/settings', function(data){
+	$.getJSON('/light-interface/settings', function(data){
         console.log(data);
         
         // load all the known devices into the grid
@@ -42,7 +42,7 @@ Number.prototype.toHHMMSS = function () {
 
 // WE WANT SOCKET.IO HERE TO MAKE ASSIGNING LIGHTS EASIER
 
-var socket = io.connect('/');
+var socket = io.connect('/light-interface');
 
 socket.on('connect', function (data) {
     socket.emit('join_channel', "noderocks" );

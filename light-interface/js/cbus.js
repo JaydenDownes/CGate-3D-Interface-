@@ -11,7 +11,7 @@ var $container = $('#content');
 $(document).ready(function(){
   // get the devices from the server
   console.log("I am ready");
-  $.getJSON('/devices',
+  $.getJSON('/light-interface/devices',
       function( data ) {
           //console.log(data);
 
@@ -40,7 +40,7 @@ $(document).ready(function(){
       }
   );
 
-  $.getJSON('/locations',
+  $.getJSON('/light-interface/locations',
       function( data ) {
           //console.log(data);
 
@@ -68,7 +68,7 @@ $(document).ready(function(){
       $('#searchbox').val('');
   });
 
-  $.getJSON('/scenes',
+  $.getJSON('/light-interface/scenes',
       function( data ) {
           //console.log(data);
 
