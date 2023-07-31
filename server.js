@@ -15,7 +15,7 @@ const logo = ["",
   "Version 2.6, Created by Jayden Downes",
   ""
 ];
-// Print Logo
+// Clear Terminal & Print Logo
 logo.forEach(line => console.log(line));
 
 //Load Modules
