@@ -169,8 +169,8 @@ If you have any feedback, please raise an **Issue** in the Issues Tab on Github
 
 ## Acknowledgements
 
- - [node-cbus]([https://github.com/anthonywebb/node-cbus])
- - [web_three_interface]([https://github.com/HomeSmartMesh/web_three_interface])
+ - API to communicate between Frontend and CGate : [node-cbus]([https://github.com/anthonywebb/node-cbus])
+ - webGL Three.js 3D Interface [web_three_interface]([https://github.com/HomeSmartMesh/web_three_interface])
 
 
 ## Authors
