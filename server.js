@@ -20,6 +20,7 @@ console.log("");
 try {
     var _ = require('underscore');
     var express = require('express');
+	const path = require('path');
     var fs = require('fs');
     console.log('(\u001b[32m#\u001b[0m) Imported Required Modules');
 } catch (error) {
@@ -143,6 +144,8 @@ if(CONFIG.cgate){
 // Initialize Express.js for configuration interface and attach it to main app
 var configApp = express();
 app.use('/configuration-interface', configApp);
+// Import the 'path' module for the configuration interface
+const path = require('path');
 // Enable JSON body parsing for configuration interface
 configApp.use(express.json());
 // Routes for configuration interface
@@ -376,7 +379,7 @@ configApp.delete('/api/configuration/devices/:id', (req, res) => {
 	});
 });
 
-// Catch-all route
+// Catch-all route for both app and configApp
 app.use('*', (req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     const userAgent = req.headers['user-agent'];
