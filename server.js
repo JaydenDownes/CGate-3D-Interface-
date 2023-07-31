@@ -21,10 +21,6 @@ try {
     var _ = require('underscore');
     var express = require('express');
     var fs = require('fs');
-    var path = require('path');
-    var http = require('http');
-    var socketIo = require('socket.io');
-    var cron = require('cron').CronJob;
     console.log('(\u001b[32m#\u001b[0m) Imported Required Modules');
 } catch (error) {
     console.error('(\u001b[31m#\u001b[0m) Error while Importing Required Modules:', error);
@@ -33,8 +29,6 @@ try {
 // Load configuration and common files
 try {
     CONFIG = require('./config');
-    COMMON = require('./common');
-    DB = require('./db.json');
     console.log('(\u001b[32m#\u001b[0m) Imported Configurations');
 } catch (error) {
     console.error('(\u001b[31m#\u001b[0m) Error while Importing Configurations:', error);
@@ -43,109 +37,106 @@ try {
 ////////////////////////
 // LOAD THE CONNECTORS
 ////////////////////////
-// If configuration enables C-Gate, initialize C-Gate connection
-if (CONFIG.cgate) {
-	console.log('(\u001b[32m#\u001b[0m) Initializing the CGate connector');
-	CBUS = require('./cgate').init();
-}
-// Initialize Express.js for main app and set up HTTP server and Socket.IO
-var app = express();
-var server = http.Server(app);
-IO = socketIo(server);
-////////////////////////
-// WEBSERVER SETUP
-////////////////////////
-// Initialize Express.js for light interface and attach it to main app
-var lightApp = express();
-app.use('/light-interface', lightApp);
-// Set up static files directory
-app.use('/light-interface', express.static(path.join(__dirname, 'light-interface')));
-// Routes for light interface
-lightApp.get('/cgate', function(req, res) {
-	if (req.query.cmd) {
-		var command = req.query.cmd.trim() + '\r';
-		console.log('remoteCommand : ' + command);
-		CBUS.write(command);
-		res.json({
-			status: 'ok',
-			executed: req.query.cmd
-		});
-	} else {
-		res.json({
-			status: 'error',
-			message: 'you must specify a command!'
-		}, 400);
-	}
-});
-lightApp.get('/cmd', function(req, res) {
-	console.log(req.query);
-	var commandArray = [{
-		type: 'lighting',
-		group: req.query.device,
-		level: parseInt(req.query.level),
-		delay: parseInt(req.query.delay),
-		timeout: parseInt(req.query.timeout)
-	}];
-	COMMON.doCommands(commandArray);
-	res.json(JSON.stringify({
-		status: 'ok'
-	}));
-});
-lightApp.get('/locations', function(req, res) {
-	// loop over the keys and build the response (an array of objects)
-	var resp = _.uniq(_.pluck(COMMON.deviceObjToArray(DB.devices), 'location'));
-	resp = _.sortBy(resp, function(str) {
-		return str;
-	});
-	res.json(resp);
-});
-lightApp.get('/scenes', function(req, res) {
-	res.json(DB.scenes);
-});
-lightApp.get('/devices', function(req, res) {
-	res.json(COMMON.deviceObjToArray(DB.devices));
-});
-//////////////////////////
-// GLOBAL HELPER METHODS
-//////////////////////////
-var cronjobs = {};
-var cronjob = require('cron').CronJob;
-// load up everything currently in the DB
-_.each(DB.tasks, function(task) {
-	// only create cron jobs for tasks that are enabled
-	if (task.enabled) {
-		addCronJob(task.id, task.cronstring, task.expression, task.commands, CONFIG.location.timezone);
-	}
-})
+if(CONFIG.cgate){
+    console.log('Initializing the cgate connector');
+    CBUS = require('./cgate').init();
+  }
+  
+  //////////////////////////
+  // GLOBAL HELPER METHODS
+  //////////////////////////
+  COMMON = require('./common');
+  
+  // TODO: should check and see if this file exists first, and if not, create it
+  DB = require('./db.json');
+  
+  ////////////////////////
+  // WEBSERVER SETUP
+  ////////////////////////
+  var app = express();
+  var server = require('http').Server(app);
+  IO = require('socket.io')(server);
+  
+  app.use('/light-interface',express.static(__dirname + '/light-interface'));
+  server.listen(CONFIG.webserver.port,CONFIG.webserver.host);
+  console.log('Console on: http://'+CONFIG.webserver.host+':'+CONFIG.webserver.port+'/console.html');
+  
+  // HTTP ROUTES
+  app.get('/light-interface/cgate', function (req, res) {
+    if (req.query.cmd) {
+      var command = req.query.cmd.trim() + '\r';
+      console.log('remoteCommand : ' + command);
+      CBUS.write(command);
+      res.json({ status: 'ok', executed: req.query.cmd});
+    }
+    else {
+      res.json({ status: 'error', message: 'you must specify a command'},400);
+    }
+  });
+  
+  app.get('/light-interface/cmd', function (req, res) {
+      console.log(req.query);
+      var commandArray = [{type:'lighting',group:req.query.device,level:parseInt(req.query.level),delay:parseInt(req.query.delay),timeout:parseInt(req.query.timeout)}];
+      COMMON.doCommands(commandArray);
+      res.json(JSON.stringify({ status: 'ok'}));
+  });
+  
+  app.get('/light-interface/locations', function (req, res) {
+      // loop over the keys and build the response (an array of objects)
+      var resp = _.uniq(_.pluck(COMMON.deviceObjToArray(DB.devices), 'location'));
+      resp = _.sortBy(resp, function(str){ return str; });
+      res.json(resp);
+  });
+  app.get('/light-interface/scenes', function (req, res) {
+      res.json(DB.scenes);
+  });
+  
+  app.get('/light-interface/devices', function (req, res) {
+      res.json(COMMON.deviceObjToArray(DB.devices));
+  });
+  
+  /////////////////////////////
+  // SCHEDULED TASKS
+  /////////////////////////////
+  var cronjobs = {};
+  var cronjob = require('cron').CronJob;
+  // load up everything currently in the DB
+  _.each(DB.tasks,function(task){
+      // only create cron jobs for tasks that are enabled
+      if (task.enabled) {
+          addCronJob(task.id,task.cronstring,task.expression,task.commands,CONFIG.location.timezone);
+      }
+  })
+  
+  function addCronJob(id,cronstring,expression,commands,timezone){
+      try {
+          console.log('Adding cronjob task: '+id);
+          cronjobs[id] = new cronjob(cronstring, function(){
+              console.log('Starting Cronjob Task: '+id);
+              // some of these tasks may have a conditional expression, some can just run
+              if(expression){
+                  if(eval(expression)) {
+                      COMMON.doCommands(commands);
+                  }
+              }
+              else {
+                  COMMON.doCommands(commands);
+              }
+          }, function(){console.log('Cronjob stopped: '+id)}, true, timezone);
+      } catch(ex) {
+          console.log("cronstring pattern not valid for "+id+": "+cronstring);
+      }
+  }
+  
+  function deleteCronJob(id) {
+      console.log('Killing cronjob '+id);
+      if(cronjobs[id]){
+          cronjobs[id].stop();
+      }
+      delete cronjobs[id];
+  }
+  
 
-function addCronJob(id, cronstring, expression, commands, timezone) {
-	try {
-		console.log('(\u001b[32m#\u001b[0m) Adding cronjob task ID: ' + id);
-		cronjobs[id] = new cronjob(cronstring, function() {
-			console.log('(\u001b[32m#\u001b[0m) Starting Cronjob Task ID: ' + id);
-			// some of these tasks may have a conditional expression, some can just run
-			if (expression) {
-				if (eval(expression)) {
-					COMMON.doCommands(commands);
-				}
-			} else {
-				COMMON.doCommands(commands);
-			}
-		}, function() {
-			console.log('(\u001b[32m#\u001b[0m) Cronjob stopped, Task ID: ' + id)
-		}, true, timezone);
-	} catch (ex) {
-		console.log("(\u001b[31m#\u001b[0m) Cronstring pattern not valid for ID: " + id + ", Cronstring is currently: " + cronstring);
-	}
-}
-
-function deleteCronJob(id) {
-	console.log('(\u001b[32m#\u001b[0m) Killing Cronjob ID:' + id);
-	if (cronjobs[id]) {
-		cronjobs[id].stop();
-	}
-	delete cronjobs[id];
-}
 //////////////////////////
 // API INTERFACE FOR CONFIGURATION
 //////////////////////////
