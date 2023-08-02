@@ -49,7 +49,9 @@ const socketIO = require('socket.io');
 try {
 	// Create an Express app and attach it to the server
 	const app = express();
+	app.use('/', express.static(path.join(__dirname, '/public')));
 	const server = require('http').Server(app);
+
 	IO = socketIO(server);
 	// Serve static files for light-interface
 	app.use('/light-interface', express.static(path.join(__dirname, '/light-interface')));
