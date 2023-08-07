@@ -1,11 +1,23 @@
 
 # CBUS CGate Smart Home 3D Interface
 
-###### **THIS PROJECT IS CURRENTLY IN THE DEVELOPMENT PHASE AND IS NOT FULLY FUNCTIONAL, PLEASE ONLY RUN IN ISOLATED ENVIRONMENT**
-
+```diff
+- THIS PROJECT IS CURRENTLY IN THE DEVELOPMENT PHASE AND IS NOT FULLY FUNCTIONAL, FOR SECURITY REASONS, RUN IN ISOLATED ENVIRONMENT
+```
 The CBUS 3D Interface is a web-based application designed for Clipsal CBUS Lighting Control Systems. This user-friendly interface allows users to control lights and other appliances, create scenes, and schedule actions, all within a 3D environment generated from your preferred CAD software.
 
+## Features
 
+- 3D Web Interface: Control your Clipsal CBUS Lighting Control System through a user-friendly and interactive 3D web-based interface.
+
+- Device Control: Turn lights and other appliances on/off or adjust their brightness levels using the 3D map.
+
+- Scene Creation: Create custom scenes to set specific lighting configurations and apply them easily with a single click.
+
+- Scheduling: Schedule actions for your lighting and appliances to automate their behavior based on your preferences.
+
+- Integration with CGate: Seamlessly interact with the CGate to gain access to your Clipsal CBUS system.
+  
 ## Install dependancies:
 1) NPM, Download and Install from:
 > https://nodejs.org/en/download/
@@ -130,18 +142,62 @@ module.exports = config;
 node server.js
 ```
 
-    
-## Features
+## Usage
+### Server Endpoints:
+#### GET `/light-interface/cgate`: Retrieve CGate Information
 
-- 3D Web Interface: Control your Clipsal CBUS Lighting Control System through a user-friendly and interactive 3D web-based interface.
+Retrieve information about the CGate interface.
 
-- Device Control: Turn lights and other appliances on/off or adjust their brightness levels using the 3D map.
+##### Example
 
-- Scene Creation: Create custom scenes to set specific lighting configurations and apply them easily with a single click.
+```
+GET /light-interface/cgate HTTP/1.1
+Host: your-server-domain.com
+```
 
-- Scheduling: Schedule actions for your lighting and appliances to automate their behavior based on your preferences.
+#### GET `/light-interface/cmd`: Send a Command to the Light Interface
 
-- Integration with CGate: Seamlessly interact with the CGate to gain access to your Clipsal CBUS system.
+Send a specific command to control the light interface.
+
+##### Example
+
+```
+GET /light-interface/cmd?command=turnOn&deviceID=1 HTTP/1.1
+Host: your-server-domain.com
+```
+
+#### GET `/light-interface/locations`: Get Locations Associated with the Light Interface
+
+Retrieve the locations associated with the light interface.
+
+##### Example
+
+```
+GET /light-interface/locations HTTP/1.1
+Host: your-server-domain.com
+```
+
+#### GET `/light-interface/scenes`: Retrieve Scenes for the Light Interface
+
+Retrieve the scenes available for the light interface.
+
+##### Example
+
+```
+GET /light-interface/scenes HTTP/1.1
+Host: your-server-domain.com
+```
+
+#### GET `/light-interface/devices`: Retrieve Devices for the Light Interface
+
+Retrieve the devices connected to the light interface.
+
+##### Example
+
+```
+GET /light-interface/devices HTTP/1.1
+Host: your-server-domain.com
+```
 
 
 ## Future Updates
@@ -162,6 +218,8 @@ node server.js
 - Configurable Home Camera Position: Allow users to configure the home camera position within the 3D map for personalized perspectives.
 
 - Day/Night Mode: Introduce a day/night mode option, including an auto mode, for adjusting the interface's appearance based on the time of day.
+
+
 ## Feedback
 
 If you have any feedback, please raise an **Issue** in the Issues Tab on Github
