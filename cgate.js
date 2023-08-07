@@ -57,12 +57,12 @@ exports.init = function(){
       console.log('(\u001b[31m#\u001b[0m) CGate statuses socket timed out, try checking the interface is online');
   });
   carrier.carry(statuses, function(line) {
-    pushRealtime('statusStream',line);
+    pushRealtime('(#) statusStream',line);
   });
 
   // every time that a message arrives, we need to send it out the realtime websocket
   function pushRealtime(type, message) {
-    console.log(type+' : '+message);
+    console.log('(#) '+type+' : '+message);
     // every message, before being sent out needs to be parsed to create a nice object that can be consumed
     var parsedMessage = parseMessage(message,type);
     IO.emit(type, parsedMessage);

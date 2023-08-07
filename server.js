@@ -383,7 +383,7 @@ try {
 	app.use('*', (req, res) => {
 		const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 		const userAgent = req.headers['user-agent'];
-		if (debugging === 1) console.error(`(\u001b[32m#\u001b[0m) A user at IP address ${ip} using browser ${userAgent} tried to reach the undefined URL: ${req.originalUrl}`);
+		if (debugging === 1) console.error(`(\u001b[32m#\u001b[0m) User loaded website. IP address ${ip} using browser ${userAgent} tried to reach the undefined URL: ${req.originalUrl}`);
 		res.status(404).send('URL not found');
 	});
 } catch (error) {
