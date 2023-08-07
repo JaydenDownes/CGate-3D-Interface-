@@ -1,39 +1,112 @@
 <!DOCTYPE html>
-<html lang="en" >
+<!-- FOR DEVELOPMENT ONLY AS REMOVES CACHE EACH LOAD-->
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>CodePen - Discord Navbar</title>
-  <link rel="stylesheet" href="./style.css">
-    <!-- UIkit CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.24/dist/css/uikit.min.css" />
+	<title>House Lighting Controls</title><!-- Themeing Headers -->
+	<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control">
+	<meta content="no-cache" http-equiv="Pragma">
+	<meta content="0" http-equiv="Expires"><!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+	<link href="fonts/icomoon/style.css" rel="stylesheet">
+	<link href="css/owl.carousel.min.css" rel="stylesheet"><!-- Bootstrap CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet"><!-- Style -->
+	<link href="css/style.css" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/d0b39413af.js">
+	</script><!-- 3D Viewer Headers -->
 
-    <!-- UIkit JS -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.24/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.24/dist/js/uikit-icons.min.js"></script>
-    
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/d0b39413af.js" crossorigin="anonymous"></script>
-  
-    
+	<script src="libs/three/three.min.js">
+	</script>
+	<script src="libs/three/OrbitControls.js">
+	</script>
+	<script src="libs/three/GLTFLoader.js">
+	</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+	<style>
+	   body { margin: 0; }
+	   canvas { width: 100%; height: 100% }
+
+	   html, body {
+	     overflow: hidden; /* Disables scroll bars */
+	     margin: 0; /* Removes default margin */
+	     padding: 0; /* Removes default padding */
+	   }
+
+	   .hero {
+	   height: 100vh !important;
+	   width: 100% !important;
+	}
+	</style>
 </head>
 <body>
-<!-- partial:index.partial.html -->
-<nav>
-  <a href=""><div class="icon-wrapper"><i class="fa-regular fa-lightbulb fa-xl"></i></div></a>
-  <a href=""><div class="icon-wrapper"><i class="fa-solid fa-snowflake fa-xl"></i></div></a>
-  <a href=""><div class="icon-wrapper"><i class="fa-solid fa-gear fa-xl"></i></div></a>
-</nav>
-
-
-<script>
-        const nav_links = document.querySelectorAll('a');
-        nav_links.forEach(anchor => anchor.addEventListener('click', (event) => {
-            event.preventDefault(); // dont follow the link as its a dummy
-            nav_links.forEach(anchor => anchor.className = '');
-            anchor.className = 'active';
-        }));
-</script>
-<!-- partial -->
-  
+	<div class="site-mobile-menu">
+		<div class="site-mobile-menu-header">
+			<div class="site-mobile-menu-close mt-3">
+				<span class="icon-close2 js-menu-toggle"></span>
+			</div>
+		</div>
+		<div class="site-mobile-menu-body"></div>
+	</div>
+	<div class="row">
+		<header class="site-navbar" role="banner">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-11 col-xl-2">
+						<h1 class="mb-0 site-logo"><a class="text-grey mb-0" href="index.html">STANFOR2</a></h1>
+					</div>
+					<div class="col-12 col-md-10 d-none d-xl-block">
+						<nav class="site-navigation position-relative text-right" role="navigation">
+							<ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+								<li class="active">
+									<a href="index.html"><span>Ground Floor</span></a>
+								</li>
+								<li>
+									<a href="firstfloor.html"><span>First Floor</span></a>
+								</li>
+								<li>
+									<a href="garden.html"><span>Garden</span></a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;">
+						<a class="site-menu-toggle js-menu-toggle text-white" href="#"><span class="icon-menu h3"></span></a>
+					</div>
+				</div>
+			</div>
+		</header><!-- <div class="container mt-5">
+          <div class="alert alert-light" role="alert">
+            A simple warning alert—check it out!
+          </div>
+        </div>-->
+	</div><!-- Controls and Configuration Menu -->
+	<!--<nav class="circleMenu">
+		<a href="">
+		<div class="icon-wrapper">
+			<i class="fa-regular fa-lightbulb fa-xl"></i>
+		</div></a> <a href="">
+		<div class="icon-wrapper">
+			<i class="fa-solid fa-snowflake fa-xl"></i>
+		</div></a> <a href="">
+		<div class="icon-wrapper">
+			<i class="fa-solid fa-gear fa-xl"></i>
+		</div></a>
+	</nav>-->
+  <!-- 3D Interface -->
+	<div class="hero" id='viewer' style="width:100%; height:100%;"></div>
+	<script src="main.js" type="module">
+	</script> 
+	<script src="js/jquery-3.3.1.min.js">
+	</script> 
+	<script src="js/popper.min.js">
+	</script> 
+	<script src="js/bootstrap.min.js">
+	</script> 
+	<script src="js/jquery.sticky.js">
+	</script> 
+	<script src="js/main.js">
+	</script>
 </body>
 </html>
