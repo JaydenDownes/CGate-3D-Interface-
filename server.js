@@ -23,6 +23,9 @@ const _ = require('underscore');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
+const si = require('systeminformation'); // For detailed system info
+const ping = require('ping');
 
 // Load configuration and common files
 try {
@@ -379,6 +382,57 @@ try {
 			}
 		});
 	});
+    
+
+    // Add the /status API endpoint
+    app.get('/status', async (req, res) => {
+      try {
+        // Get basic OS info
+        const hostname = os.hostname();
+        const totalMem = os.totalmem();
+        const freeMem = os.freemem();
+        const usedMem = totalMem - freeMem;
+        const cpus = os.cpus();
+		const uptime = os.uptime(); // Server uptime in seconds
+    	const numCores = os.cpus().length; // Number of CPU cores
+
+        // Get disk usage
+        const disks = await si.fsSize();
+
+        // Get CPU load
+        const load = await si.currentLoad();
+
+        // Get localhost ping status
+        const localhostPing = await ping.promise.probe('localhost');
+
+        // Get Cbus status (assuming CBUS is an object with a status property)
+        const cbusStatus = CBUS ? CBUS.status : 'unknown';
+
+        // Construct the response object
+        const status = {
+            hostname,
+			uptime: os.uptime(), // Add server uptime in seconds
+			numCores: os.cpus().length, // Add number of CPU cores
+			ram: {
+				total: totalMem,
+				free: freeMem,
+				used: usedMem
+			},
+			diskUsage: disks,
+			cpuLoad: load,
+			cpuInfo: cpus.map(cpu => ({ model: cpu.model, speed: cpu.speed })),
+			localhostPing: localhostPing.alive ? 'Online' : 'Offline',
+			cbusStatus
+        };
+
+        // Send the response
+        res.json(status);
+      } catch (error) {
+        console.error('Failed to get system status:', error);
+        res.status(500).send('Failed to get system status');
+      }
+    });
+    
 	// Catch-all route for both app and configApp
 	app.use('*', (req, res) => {
 		const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
