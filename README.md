@@ -1,9 +1,6 @@
 
 # CBUS CGate Smart Home 3D Interface
 
-```diff
-- THIS PROJECT IS CURRENTLY IN THE DEVELOPMENT PHASE AND IS NOT FULLY FUNCTIONAL, FOR SECURITY REASONS, RUN IN ISOLATED ENVIRONMENT
-```
 The CBUS 3D Interface is a web-based application designed for Clipsal CBUS Lighting Control Systems. This user-friendly interface allows users to control lights and other appliances, create scenes, and schedule actions, all within a 3D environment generated from your preferred CAD software.
 
 ## Features
@@ -17,7 +14,34 @@ The CBUS 3D Interface is a web-based application designed for Clipsal CBUS Light
 - Scheduling: Schedule actions for your lighting and appliances to automate their behavior based on your preferences.
 
 - Integration with CGate: Seamlessly interact with the CGate to gain access to your Clipsal CBUS system.
-  
+
+## To do:
+
+- [ ] Fix inproper lighting throughout scenes
+- [ ] Allow for keypoints on each room for a close up view of all devices
+- [ ] Change controls to a primary control per room and seceondary controls by clicking on each device
+- [ ] Show ON/OFF or lighting dim percentage above each room (optional)
+- [ ] Add-on for Google Assistant 
+- [ ] Ability to disable UI and configure directly through configuration files and CLI
+
+Additon of extra devices (Including vendors outside of Cbus):
+  - [ ] Access Control
+  - [ ] Air Purifiers
+  - [ ] Air Quality Sensors
+  - [ ] Contact Sensors
+  - [ ] Dorbells
+  - [ ] Garage door opener
+  - [ ] Heating and Cooling controls (Including evaporative)
+  - [ ] Humidifier/Dehumidifier
+  - [ ] Irrigation systsem
+  - [ ] Leak Sensors
+  - [ ] Light Sensors
+  - [ ] Motion Sensors
+  - [ ] Power Management
+  - [ ] Security System
+  - [ ] Thermostats
+  - [ ] Window / Blinds control
+
 ## Install dependancies:
 1) NPM, Download and Install from:
 > https://nodejs.org/en/download/
